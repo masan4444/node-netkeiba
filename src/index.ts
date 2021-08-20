@@ -76,7 +76,7 @@ const main = async () => {
     RaceResultTable.init(),
     PayoffResultTable.init(),
   ]);
-  await taskInterval([`${htmlDir}/201806040710.html`], parseAndSave, 0);
+  await taskInterval(htmlFilepaths, parseAndSave, 0);
 
   console.log("======== Complete =========");
 };
