@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { taskInterval, entries, parseLastSegUrl } from "./lib";
+import { taskInterval, entries, parseLastSegUrl, logger } from "./lib";
 import {
   fetchSaveRaceUrls,
   readRaceUrls,
@@ -37,7 +37,7 @@ const parseAndSave = (filepath: string) =>
     .then((buffer) => buffer.toString())
     .then((html) => parseRace(parseLastSegUrl(filepath).split(".")[0], html))
     .then(async (race) => {
-      // console.log(race);
+      // logger.debug(race);
       await saveRace(race);
       return race;
     });
@@ -46,39 +46,38 @@ const raceUrlsFile = "downloads/race_url.txt";
 const htmlDir = "downloads/html";
 
 const main = async () => {
-  console.log("======== Fetch urllist =========");
-
-  await fetchSaveRaceUrls(
-    new Date(2021, 7, 1),
-    new Date(2022, 0, 1),
-    500,
-    raceUrlsFile
-  );
+  logger.info("fetch race urls");
+  // await fetchSaveRaceUrls(
+  //   new Date(2021, 7, 1),
+  //   new Date(2022, 0, 1),
+  //   500,
+  //   raceUrlsFile
+  // );
 
   const raceUrls = await readRaceUrls(raceUrlsFile);
-  console.log(`${raceUrls.length} races`);
+  logger.debug(`${raceUrls.length} races`);
 
-  console.log("======== Fetch htmlfile =========");
-  await taskInterval(
-    raceUrls,
-    async (url: string) => {
-      await fetchHtml(url, htmlDir);
-    },
-    500
-  );
+  logger.info("fetch html files");
+  // await taskInterval(
+  //   raceUrls,
+  //   async (url: string) => {
+  //     await fetchHtml(url, htmlDir);
+  //   },
+  //   500
+  // );
 
   const htmlFilepaths = await getHtmlFilepath(htmlDir);
-  console.log(htmlFilepaths);
+  logger.debug(htmlFilepaths);
 
-  console.log("======== Parse and Save =========");
-  await Promise.all([
-    RaceTable.init(),
-    RaceResultTable.init(),
-    PayoffResultTable.init(),
-  ]);
-  await taskInterval(htmlFilepaths, parseAndSave, 0);
+  logger.info("parse html and save db");
+  // await Promise.all([
+  //   RaceTable.init(),
+  //   RaceResultTable.init(),
+  //   PayoffResultTable.init(),
+  // ]);
+  // await taskInterval(htmlFilepaths, parseAndSave, 0);
 
-  console.log("======== Complete =========");
+  logger.info("complete");
 };
 
-main().catch((e) => console.log(e));
+main().catch((e) => logger.error(e));

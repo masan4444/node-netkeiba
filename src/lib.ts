@@ -1,5 +1,9 @@
 import axiosBase from "axios";
 import iconv from "iconv-lite";
+import Log4js from "log4js";
+
+Log4js.configure("log-config.json");
+export const logger = Log4js.getLogger("netkeiba");
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,7 +32,7 @@ export const taskInterval = <T, U>(
       promise.then(async (prev) => {
         await sleep(interval);
         if (length > 100 && idx === Math.ceil(progress)) {
-          console.log(`progress: ${Math.ceil((progress / length) * 100)}%`);
+          logger.debug(`progress: ${Math.ceil((progress / length) * 100)}%`);
           progress += length / 100;
         }
         return prev.concat(await task(url));

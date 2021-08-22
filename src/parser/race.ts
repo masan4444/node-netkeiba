@@ -2,6 +2,7 @@
 import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { parse as parseDate } from "date-fns";
 import { conditionRegExp, infoRegExp } from "../const";
+import { logger } from "../lib";
 import Race, {
   RaceResult,
   RaceResultValidator,
@@ -55,8 +56,8 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
   };
 
   if (!RaceResultValidator.is(raceResult)) {
-    console.log("RaceResultParseError: ");
-    console.log(raceResult);
+    logger.error("RaceResultParseError: ");
+    logger.error(raceResult);
   }
   return raceResult;
 };
@@ -93,13 +94,13 @@ const parseRace = (url: string, html: string): Race => {
     .querySelector(".smalltxt")
     ?.firstChild.rawText.match(infoRegExp)?.groups;
 
-  console.log(conditionRegExp);
-  console.log(intro.querySelector("span")?.firstChild.rawText);
+  // logger.debug(conditionRegExp);
+  // logger.debug(intro.querySelector("span")?.firstChild.rawText);
 
-  // console.log(intro.querySelector(".smalltxt")?.firstChild.rawText);
-  // console.log(infoRegExp);
+  // logger.debug(intro.querySelector(".smalltxt")?.firstChild.rawText);
+  // logger.debug(infoRegExp);
 
-  console.log(condition);
+  // logger.debug(condition);
 
   if (!name || !raceNumber || !condition || !info) {
     throw new Error(`IntroParseError: ${url}`);

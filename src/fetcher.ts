@@ -1,9 +1,7 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 import fs from "fs/promises";
 import { format, addMonths } from "date-fns";
 import { baseUrl } from "./const";
-import { sleep, axios, taskInterval, parseLastSegUrl } from "./lib";
+import { axios, taskInterval, parseLastSegUrl, logger } from "./lib";
 
 const fetchDayUrlsInMonth = async (date: Date): Promise<string[]> => {
   const url = `${baseUrl}/?pid=race_top&date=${format(date, "yyyyMMdd")}`;
@@ -27,34 +25,34 @@ const fetchRaceUrlsInDay = async (dayUrl: string): Promise<string[]> => {
   return raceUrls;
 };
 
-export const fetchRaceUrls = async (
-  start: Date,
-  end: Date,
-  interval: number
-): Promise<string[]> => {
-  let dayUrls: string[] = [];
-  for (let month = start; month < end; month = addMonths(month, 1)) {
-    const dayUrl = await fetchDayUrlsInMonth(month);
-    console.log(`${format(month, "yyyy/MM")}: ${dayUrl.length} days`);
-    dayUrls = dayUrls.concat(dayUrl);
-    await sleep(interval);
-  }
-  console.log(`days: ${dayUrls.length} days`);
+// export const fetchRaceUrls = async (
+//   start: Date,
+//   end: Date,
+//   interval: number
+// ): Promise<string[]> => {
+//   let dayUrls: string[] = [];
+//   for (let month = start; month < end; month = addMonths(month, 1)) {
+//     const dayUrl = await fetchDayUrlsInMonth(month);
+//     logger.info(`${format(month, "yyyy/MM")}: ${dayUrl.length} days`);
+//     dayUrls = dayUrls.concat(dayUrl);
+//     await sleep(interval);
+//   }
+//   logger.info(`days: ${dayUrls.length} days`);
 
-  let raceUrls: string[] = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const dayUrl of dayUrls) {
-    const raceUrl = await fetchRaceUrlsInDay(dayUrl);
-    console.log(
-      `${dayUrl.substring(dayUrl.length - 8)}: ${raceUrl.length} races`
-    );
-    raceUrls = raceUrls.concat(raceUrl);
-    await sleep(interval);
-  }
+//   let raceUrls: string[] = [];
+//   // eslint-disable-next-line no-restricted-syntax
+//   for (const dayUrl of dayUrls) {
+//     const raceUrl = await fetchRaceUrlsInDay(dayUrl);
+//     logger.info(
+//       `${dayUrl.substring(dayUrl.length - 8)}: ${raceUrl.length} races`
+//     );
+//     raceUrls = raceUrls.concat(raceUrl);
+//     await sleep(interval);
+//   }
 
-  console.log(`all races: ${raceUrls.length} races`);
-  return raceUrls;
-};
+//   logger.info(`all races: ${raceUrls.length} races`);
+//   return raceUrls;
+// };
 
 export const fetchSaveRaceUrls = async (
   start: Date,
@@ -62,6 +60,7 @@ export const fetchSaveRaceUrls = async (
   interval: number,
   filename: string
 ): Promise<void> => {
+  /* eslint-disable no-await-in-loop */
   for (let month = start; month < end; month = addMonths(month, 1)) {
     const dayUrls = await fetchDayUrlsInMonth(month);
     if (!dayUrls.length) {
@@ -77,7 +76,7 @@ export const fetchSaveRaceUrls = async (
       },
       interval
     );
-    console.log(
+    logger.info(
       `${format(month, "yyyy/MM")}: ${dayUrls.length} days: ${raceCnt.reduce(
         (acc, cur) => acc + cur
       )} races`
