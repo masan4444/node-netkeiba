@@ -1,4 +1,4 @@
-export const baseUrl = "https://db.netkeiba.com";
+export const domain = "netkeiba.com";
 
 export const courses = [
   "札幌",
@@ -14,6 +14,7 @@ export const courses = [
 ] as const;
 export const surfs = ["芝", "ダ", "芝 ダート"] as const;
 export const turns = ["右", "左"] as const;
+export const lines = ["外", "直線", "外-内"];
 export const wethers = ["晴", "曇", "雨", "小雨", "雪", "小雪"] as const;
 export const trackConds = ["良", "稍重", "重", "不良"] as const;
 
@@ -24,7 +25,9 @@ export const oneWin = ["1勝クラス", "500万下"] as const;
 export const conditionRegExp = RegExp(
   `(?<steeple>障)?(?<surf>${surfs.join("|")})(?<turn>${turns.join(
     "|"
-  )})?(?<line>(?: 外)|(?:直線))?(?<dist>\\d+?)m&.*天候 : (?<wether>${wethers.join(
+  )})? ?(?<line>${lines.join(
+    "|"
+  )})?(?<dist>\\d+?)m&.*天候 : (?<wether>${wethers.join(
     "|"
   )})&.*: (?<trackCond>${trackConds.join(
     "|"

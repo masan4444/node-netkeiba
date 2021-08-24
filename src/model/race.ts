@@ -8,6 +8,7 @@ import {
   threeWin,
   trackConds,
   turns,
+  lines,
   twoWin,
   wethers,
 } from "../const";
@@ -15,6 +16,7 @@ import {
 type Course = typeof courses[number];
 type Surf = typeof surfs[number];
 type Turn = typeof turns[number];
+type Line = typeof lines[number];
 type Wether = typeof wethers[number];
 type TrackCond = typeof trackConds[number];
 type RaceClass =
@@ -35,7 +37,7 @@ type Race = {
   steeple?: "障";
   surf: Surf; // 芝
   turn?: Turn; // 右
-  line?: "外" | "直線";
+  line?: Line;
   dist: number; // 2200
   wether: Wether; // 晴
   trackCond: TrackCond; // 良

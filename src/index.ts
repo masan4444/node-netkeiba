@@ -1,12 +1,18 @@
 import fs from "fs/promises";
-import { taskInterval, entries, parseLastSegUrl, logger } from "./lib";
+import { URLSearchParams } from "url";
+import axiosBase from "axios";
+import axiosCookieJarSupport from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
+
+import { domain } from "./const";
+import { taskInterval, entries, parseLastSegUrl, logger, client } from "./lib";
 import {
   fetchSaveRaceUrls,
   readRaceUrls,
   fetchHtml,
   getHtmlFilepath,
-} from "./fetcher";
-import parseRace from "./parser/race";
+} from "./crawler";
+import parseRace from "./parser";
 import Race from "./model/race";
 import { BetType } from "./model/bet";
 import { Payoff } from "./model/payoffResult";
@@ -42,40 +48,69 @@ const parseAndSave = (filepath: string) =>
       return race;
     });
 
-const raceUrlsFile = "downloads/race_url.txt";
-const htmlDir = "downloads/html";
+const login = async (loginId: string, password: string) => {
+  axiosCookieJarSupport(axiosBase);
+  const clientWithJar = axiosBase.create({
+    jar: true,
+    withCredentials: true,
+  });
+
+  const form = new URLSearchParams();
+  form.append("pid", "login");
+  form.append("action", "auth");
+  form.append("login_id", loginId);
+  form.append("pswd", password);
+
+  const cookiejar = (await clientWithJar
+    .post(`https://regist.${domain}/account/`, form)
+    .then((res) => res.config.jar)) as CookieJar;
+  const cookie = cookiejar.getCookieStringSync(`https://${domain}`);
+  client.defaults.headers = { common: { Cookie: cookie } };
+
+  return cookie.includes("nkauth");
+};
+
+const raceUrlsFile = "downloads/test/race_url.txt";
+const htmlDir = "downloads/test/html";
 
 const main = async () => {
+  logger.level = "all";
+
+  logger.info("login");
+  if (await login("loginid@example.com", "password")) {
+    logger.info("success login");
+  }
+
   logger.info("fetch race urls");
-  // await fetchSaveRaceUrls(
-  //   new Date(2021, 7, 1),
-  //   new Date(2022, 0, 1),
-  //   500,
-  //   raceUrlsFile
-  // );
+  await fetchSaveRaceUrls(
+    new Date(2021, 7, 1),
+    new Date(2022, 0, 1),
+    500,
+    raceUrlsFile
+  );
 
   const raceUrls = await readRaceUrls(raceUrlsFile);
   logger.debug(`${raceUrls.length} races`);
 
   logger.info("fetch html files");
-  // await taskInterval(
-  //   raceUrls,
-  //   async (url: string) => {
-  //     await fetchHtml(url, htmlDir);
-  //   },
-  //   500
-  // );
+  await taskInterval(
+    raceUrls,
+    async (url: string) => {
+      await fetchHtml(url, htmlDir);
+    },
+    500
+  );
 
   const htmlFilepaths = await getHtmlFilepath(htmlDir);
   logger.debug(htmlFilepaths);
 
   logger.info("parse html and save db");
-  // await Promise.all([
-  //   RaceTable.init(),
-  //   RaceResultTable.init(),
-  //   PayoffResultTable.init(),
-  // ]);
-  // await taskInterval(htmlFilepaths, parseAndSave, 0);
+  await Promise.all([
+    RaceTable.init(),
+    RaceResultTable.init(),
+    PayoffResultTable.init(),
+  ]);
+  await taskInterval(htmlFilepaths, parseAndSave, 0);
 
   logger.info("complete");
 };

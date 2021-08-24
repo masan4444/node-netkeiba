@@ -1,13 +1,12 @@
 import fs from "fs/promises";
 import { format, addMonths } from "date-fns";
-import { baseUrl } from "./const";
-import { axios, taskInterval, parseLastSegUrl, logger } from "./lib";
+import { client, taskInterval, parseLastSegUrl, logger } from "./lib";
 
 const fetchDayUrlsInMonth = async (date: Date): Promise<string[]> => {
-  const url = `${baseUrl}/?pid=race_top&date=${format(date, "yyyyMMdd")}`;
-  const html = await axios.get(url).then((res) => res.data as string);
+  const url = `/?pid=race_top&date=${format(date, "yyyyMMdd")}`;
+  const html = await client.get(url).then((res) => res.data as string);
   const dayUrls = [...html.matchAll(/(\/race\/list\/\d+)\/">\d+/g)].map(
-    (match: RegExpMatchArray) => baseUrl + match[1]
+    (match) => match[1]
   );
   return dayUrls;
 };
@@ -18,41 +17,12 @@ const fetchDayUrlsInMonth = async (date: Date): Promise<string[]> => {
  * @returns ex) ["https://db.netkeiba.com/race/202105010301/", ]
  */
 const fetchRaceUrlsInDay = async (dayUrl: string): Promise<string[]> => {
-  const html = await axios.get(dayUrl).then((res) => res.data as string);
+  const html = await client.get(dayUrl).then((res) => res.data as string);
   const raceUrls = [...html.matchAll(/\/race\/\d+\//g)].map(
-    (match: RegExpMatchArray) => baseUrl + match[0]
+    (match) => match[0]
   );
   return raceUrls;
 };
-
-// export const fetchRaceUrls = async (
-//   start: Date,
-//   end: Date,
-//   interval: number
-// ): Promise<string[]> => {
-//   let dayUrls: string[] = [];
-//   for (let month = start; month < end; month = addMonths(month, 1)) {
-//     const dayUrl = await fetchDayUrlsInMonth(month);
-//     logger.info(`${format(month, "yyyy/MM")}: ${dayUrl.length} days`);
-//     dayUrls = dayUrls.concat(dayUrl);
-//     await sleep(interval);
-//   }
-//   logger.info(`days: ${dayUrls.length} days`);
-
-//   let raceUrls: string[] = [];
-//   // eslint-disable-next-line no-restricted-syntax
-//   for (const dayUrl of dayUrls) {
-//     const raceUrl = await fetchRaceUrlsInDay(dayUrl);
-//     logger.info(
-//       `${dayUrl.substring(dayUrl.length - 8)}: ${raceUrl.length} races`
-//     );
-//     raceUrls = raceUrls.concat(raceUrl);
-//     await sleep(interval);
-//   }
-
-//   logger.info(`all races: ${raceUrls.length} races`);
-//   return raceUrls;
-// };
 
 export const fetchSaveRaceUrls = async (
   start: Date,
@@ -85,11 +55,13 @@ export const fetchSaveRaceUrls = async (
 };
 
 export const readRaceUrls = (filename: string): Promise<string[]> =>
-  fs.readFile(filename).then((buffer) => buffer.toString().trim().split("\n"));
+  fs
+    .readFile(filename)
+    .then((buffer) => buffer.toString().split("\n").filter(Boolean));
 
 export const fetchHtml = async (url: string, dir: string): Promise<void> => {
   const id = parseLastSegUrl(url);
-  const html = await axios.get(url).then((res) => res.data as string);
+  const html = await client.get(url).then((res) => res.data as string);
   await fs.writeFile(`${dir}/${id}.html`, html);
 };
 

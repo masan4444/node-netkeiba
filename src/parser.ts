@@ -1,23 +1,14 @@
 /* eslint-disable radix */
 import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { parse as parseDate } from "date-fns";
-import { conditionRegExp, infoRegExp } from "../const";
-import { logger } from "../lib";
+import { conditionRegExp, infoRegExp } from "./const";
+import { logger, parseLastSegUrl, parseTime } from "./lib";
 import Race, {
   RaceResult,
   RaceResultValidator,
   PayoffResult,
-} from "../model/race";
-import * as Bet from "../model/bet";
-
-const parseLastSegUrl = (url: string): string =>
-  /([^/]+?)\/?$/.exec(url)?.[1] as string;
-const parseTime = (time: string): number | undefined => {
-  const match = /(?:(?<hour>\d+):)?(?<min>.+)/?.exec(time)?.groups;
-  return match
-    ? parseInt(match.hour ?? "0") * 60 + Number(match.min)
-    : undefined;
-};
+} from "./model/race";
+import * as Bet from "./model/bet";
 
 const parseResult = (elements: HTMLElement[]): RaceResult => {
   const column = elements.map((e, i) =>
@@ -94,15 +85,11 @@ const parseRace = (url: string, html: string): Race => {
     .querySelector(".smalltxt")
     ?.firstChild.rawText.match(infoRegExp)?.groups;
 
-  // logger.debug(conditionRegExp);
-  // logger.debug(intro.querySelector("span")?.firstChild.rawText);
-
-  // logger.debug(intro.querySelector(".smalltxt")?.firstChild.rawText);
-  // logger.debug(infoRegExp);
-
-  // logger.debug(condition);
-
   if (!name || !raceNumber || !condition || !info) {
+    logger.debug(intro.querySelector("span")?.firstChild.rawText);
+    logger.debug(conditionRegExp);
+    logger.debug(intro.querySelector(".smalltxt")?.firstChild.rawText);
+    logger.debug(infoRegExp);
     throw new Error(`IntroParseError: ${url}`);
   }
 
@@ -130,7 +117,7 @@ const parseRace = (url: string, html: string): Race => {
     steeple: steeple as Race["steeple"],
     surf: surf as Race["surf"],
     turn: turn as Race["turn"],
-    line: line.trim() as Race["line"],
+    line: line as Race["line"],
     dist: parseInt(dist),
     wether: wether as Race["wether"],
     trackCond: trackCond as Race["trackCond"],
