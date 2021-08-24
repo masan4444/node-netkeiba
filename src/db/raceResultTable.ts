@@ -1,4 +1,4 @@
-import DBCommon from "./common";
+import DBCommon from "./DBCommon";
 import RaceResult from "../model/raceResult";
 
 export default class RaceResultTable extends DBCommon {

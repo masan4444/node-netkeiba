@@ -1,4 +1,4 @@
-import DBCommon from "./common";
+import DBCommon from "./DBCommon";
 import { Payoff } from "../model/payoffResult";
 import { BetType } from "../model/bet";
 
