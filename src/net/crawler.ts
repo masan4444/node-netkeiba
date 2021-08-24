@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { format, addMonths } from "date-fns";
-import { client, taskInterval, parseLastSegUrl, logger } from "./lib";
+import { client, taskInterval, parseLastSegUrl, logger } from "../lib";
 
 const fetchDayUrlsInMonth = async (date: Date): Promise<string[]> => {
   const url = `/?pid=race_top&date=${format(date, "yyyyMMdd")}`;

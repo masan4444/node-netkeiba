@@ -1,14 +1,14 @@
 /* eslint-disable radix */
 import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { parse as parseDate } from "date-fns";
-import { conditionRegExp, infoRegExp } from "./const";
-import { logger, parseLastSegUrl, parseTime } from "./lib";
+import { conditionRegExp, infoRegExp } from "../const";
+import { logger, parseLastSegUrl, parseTime } from "../lib";
 import Race, {
   RaceResult,
   RaceResultValidator,
   PayoffResult,
-} from "./model/race";
-import * as Bet from "./model/bet";
+} from "../model/race";
+import * as Bet from "../model/bet";
 
 const parseResult = (elements: HTMLElement[]): RaceResult => {
   const column = elements.map((e, i) =>
