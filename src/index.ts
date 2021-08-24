@@ -53,7 +53,9 @@ export const fetch = async (
   return count;
 };
 
-export const parse = async (htmlDir: PathLike): Promise<Race[]> => {
+export const parse = async (
+  htmlDir: PathLike
+): Promise<Array<Race | undefined>> => {
   await initDB();
   const htmlFiles = await fs.readdir(htmlDir);
   return Promise.all(
@@ -66,6 +68,10 @@ export const parse = async (htmlDir: PathLike): Promise<Race[]> => {
           logger.debug(race);
           await saveRace(race);
           return race;
+        })
+        .catch((e) => {
+          logger.error(e);
+          return undefined;
         })
     )
   );
@@ -93,7 +99,7 @@ const main = async (
   await fetch(urlFile, htmlDir, interval);
 
   logger.info("parse html and save db");
-  const races = await parse(htmlDir);
+  const races = (await parse(htmlDir)).filter(Boolean);
   logger.info(`${races.length}`);
 
   logger.info("complete");

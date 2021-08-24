@@ -70,27 +70,26 @@ const parsePayoff = (column: HTMLElement): PayoffResult => {
 };
 
 const parseRace = (url: string, html: string): Race => {
+  const id = path.parse(url).name;
+  if (id === "200808020398" || id === "200808020399") {
+    throw new Error(`BrokenHtmlData: ${url} is broken`);
+  }
+
   const root = HtmlParser.parse(html);
   const intro = root.querySelector(".data_intro");
   if (!intro) {
     throw new Error(`NoRaceDataError: ${url}`);
   }
 
-  const name = intro.querySelector("h1")?.firstChild.rawText.trim();
-  const id = path.parse(url).name;
-  const raceNumber = intro.querySelector("dt")?.rawText.trim().slice(0, -2);
+  const name = intro.querySelector("h1")?.firstChild?.rawText?.trim();
+  const raceNumber = intro.querySelector("dt")?.rawText?.trim()?.slice(0, -2);
   const condition = intro
     .querySelector("span")
     ?.firstChild.rawText.match(conditionRegExp)?.groups;
   const info = intro
     .querySelector(".smalltxt")
     ?.firstChild.rawText.match(infoRegExp)?.groups;
-
   if (!name || !raceNumber || !condition || !info) {
-    logger.debug(intro.querySelector("span")?.firstChild.rawText);
-    logger.debug(conditionRegExp);
-    logger.debug(intro.querySelector(".smalltxt")?.firstChild.rawText);
-    logger.debug(infoRegExp);
     throw new Error(`IntroParseError: ${url}`);
   }
 
