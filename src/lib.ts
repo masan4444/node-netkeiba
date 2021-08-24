@@ -19,30 +19,6 @@ export const entries = Object.entries as <T>(
   o: T
 ) => [Extract<keyof T, string>, T[keyof T]][];
 
-export const taskInterval = <T, U>(
-  array: T[],
-  task: (src: T) => Promise<U>,
-  interval: number
-): Promise<U[]> => {
-  const { length } = array;
-  if (!length) {
-    return new Promise(() => []);
-  }
-  let progress = 0;
-  return array.slice(1).reduce(
-    (promise, url, idx) =>
-      promise.then(async (prev) => {
-        await sleep(interval);
-        if (length > 100 && idx === Math.ceil(progress)) {
-          logger.debug(`progress: ${Math.ceil((progress / length) * 100)}%`);
-          progress += length / 100;
-        }
-        return prev.concat(await task(url));
-      }),
-    task(array[0]).then((ret) => [ret])
-  );
-};
-
 export const parseLastSegUrl = (url: string): string =>
   /([^/]+?)\/?$/.exec(url)?.[1] as string;
 
