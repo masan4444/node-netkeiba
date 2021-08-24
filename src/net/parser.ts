@@ -1,8 +1,9 @@
 /* eslint-disable radix */
 import HtmlParser, { HTMLElement } from "fast-html-parser";
+import path from "path";
 import { parse as parseDate } from "date-fns";
 import { conditionRegExp, infoRegExp } from "../const";
-import { logger, parseLastSegUrl, parseTime } from "../lib";
+import { logger, parseTime } from "../lib";
 import Race, {
   RaceResult,
   RaceResultValidator,
@@ -21,12 +22,12 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
     ranking: parseInt(column[0]) || (column[0] as RaceResult["ranking"]),
     frameNumber: parseInt(column[1]),
     horseNumber: parseInt(column[2]),
-    horseId: parseLastSegUrl(column[3]),
+    horseId: path.parse(column[3]).name,
 
     sex: column[4][0] as RaceResult["sex"],
     age: parseInt(column[4][1]),
     carryWeight: parseInt(column[5]),
-    jockeyId: parseLastSegUrl(column[6]),
+    jockeyId: path.parse(column[6]).name,
 
     time: parseTime(column[7]),
     margin: column[8],
@@ -41,8 +42,8 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
     weightChange: weight
       ? parseInt(weight[2])
       : (column[14] as RaceResult["weight"]),
-    trainerId: parseLastSegUrl(column[18]),
-    ownerId: parseLastSegUrl(column[19]),
+    trainerId: path.parse(column[18]).name,
+    ownerId: path.parse(column[19]).name,
     prizeMoney: Number(column[20].replace(",", "")),
   };
 
@@ -76,7 +77,7 @@ const parseRace = (url: string, html: string): Race => {
   }
 
   const name = intro.querySelector("h1")?.firstChild.rawText.trim();
-  const id = parseLastSegUrl(url);
+  const id = path.parse(url).name;
   const raceNumber = intro.querySelector("dt")?.rawText.trim().slice(0, -2);
   const condition = intro
     .querySelector("span")

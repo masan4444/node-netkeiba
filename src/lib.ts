@@ -19,9 +19,6 @@ export const entries = Object.entries as <T>(
   o: T
 ) => [Extract<keyof T, string>, T[keyof T]][];
 
-export const parseLastSegUrl = (url: string): string =>
-  /([^/]+?)\/?$/.exec(url)?.[1] as string;
-
 export const parseTime = (time: string): number | undefined => {
   const match = /(?:(?<hour>\d+):)?(?<min>.+)/?.exec(time)?.groups;
   return match

@@ -27,8 +27,8 @@ export default async function* raceUrlGenerator(
 ): AsyncGenerator<string, void, undefined> {
   // eslint-disable-next-line no-restricted-syntax
   for await (const dayUrl of dayUrlGenerator(start, end)) {
+    await sleep(interval);
     const html = await client.get(dayUrl).then((res) => res.data as string);
     yield* [...html.matchAll(/\/race\/\d+\//g)].map((match) => match[0]);
-    await sleep(interval);
   }
 }
