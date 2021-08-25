@@ -8,7 +8,7 @@
     "prepublishOnly": "npm run build",
     "format": "prettier --write '**/*.{js,ts,json}'",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts .",
-    "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts .",
+    "lint:fix": "npm run lint -- --fix",
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "npm run build && husky install"
