@@ -20,7 +20,7 @@
   "author": "masan4444",
   "license": "ISC",
   "files": [
-    "dist"
+    "dist/**/*"
   ],
   "engines": {
     "node": ">= 10.13"
