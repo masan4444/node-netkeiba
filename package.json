@@ -11,7 +11,7 @@
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts .",
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "npm run build & husky install"
+    "prepare": "echo \"=========prepare========\" & npm run build & husky install"
   },
   "lint-staged": {
     "*.{js,ts}": ["prettier --write", "eslint --fix --config .eslintrc.json"],
