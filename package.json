@@ -5,8 +5,13 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "npm run build",
+    "format": "prettier --write '**/*.{js,ts,json}'",
+    "lint": "eslint --config .eslintrc.json --ext .js,.ts .",
+    "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts .",
+    "start": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "echo \"=========prepare========\" & npm run build & husky install"
   },
   "lint-staged": {
     "*.{js,ts}": [
@@ -22,6 +27,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">= 10.13"
+  },
   "devDependencies": {
     "@types/fast-html-parser": "^1.0.2",
     "@types/node": "^14.17.11",
