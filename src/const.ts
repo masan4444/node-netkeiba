@@ -14,7 +14,7 @@ export const courses = [
 ] as const;
 export const surfs = ["芝", "ダ", "芝 ダート"] as const;
 export const turns = ["右", "左"] as const;
-export const lines = ["外", "直線", "外-内"];
+export const lines = ["外", "直線", "外-内", "内-外", "内2周"];
 export const wethers = ["晴", "曇", "雨", "小雨", "雪", "小雪"] as const;
 export const trackConds = ["良", "稍重", "重", "不良"] as const;
 
