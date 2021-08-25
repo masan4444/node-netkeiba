@@ -17,6 +17,7 @@ export const crawl = async (
   interval: number
 ): Promise<number> => {
   let count = 0;
+  await fs.mkdir(path.dirname(urlFile.toString()), { recursive: true });
   for await (const raceUrl of raceUrlGenerator(
     startMonth,
     endMonth,
@@ -39,6 +40,7 @@ export const fetch = async (
   const { length } = raceUrls;
   let count = 0;
   let progress = 0;
+  await fs.mkdir(htmlDir, { recursive: true });
   for await (const [id, html] of raceHtmlGenerator(raceUrls)) {
     await Promise.all([
       fs.writeFile(path.join(htmlDir.toString(), `${id}.html`), html),
@@ -91,14 +93,16 @@ const main = async (
     logger.info("success login");
   }
 
-  logger.info("crawl race urls");
+  logger.info(`crawl race urls to ${urlFile.toLocaleString()}`);
   const count = await crawl(startMonth, endMonth, urlFile, interval);
   logger.debug(`crawled ${count} races`);
 
-  logger.info("fetch html files");
+  logger.info(
+    `fetch html files from ${urlFile.toLocaleString()} to ${htmlDir.toLocaleString()}`
+  );
   await fetch(urlFile, htmlDir, interval);
 
-  logger.info("parse html and save db");
+  logger.info(`parse html and save db from ${htmlDir.toLocaleString()}`);
   const races = (await parse(htmlDir)).filter(Boolean);
   logger.info(`${races.length}`);
 
