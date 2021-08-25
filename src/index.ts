@@ -56,27 +56,35 @@ export const fetch = async (
 };
 
 export const parse = async (
-  htmlDir: PathLike
-): Promise<Array<Race | undefined>> => {
-  await initDB();
+  htmlDir: PathLike,
+  parsedFile: PathLike
+): Promise<Array<Race>> => {
   const htmlFiles = await fs.readdir(htmlDir);
-  return Promise.all(
-    htmlFiles.map((filepath) =>
-      fs
-        .readFile(path.join(htmlDir.toString(), filepath))
-        .then((buffer) => buffer.toString())
-        .then((html) => parseRace(filepath, html))
-        .then(async (race) => {
-          logger.debug(race);
-          await saveRace(race);
-          return race;
-        })
-        .catch((e) => {
-          logger.error(e);
-          return undefined;
-        })
+  const races = (
+    await Promise.all(
+      htmlFiles.map((filepath) =>
+        fs
+          .readFile(path.join(htmlDir.toString(), filepath))
+          .then((buffer) => buffer.toString())
+          .then((html) => parseRace(filepath, html))
+          .catch((e) => {
+            logger.error(e);
+            return undefined;
+          })
+      )
     )
-  );
+  ).filter(Boolean) as Race[];
+  await fs.mkdir(path.dirname(parsedFile.toString()), { recursive: true });
+  await fs.writeFile(parsedFile, JSON.stringify(races));
+  return races;
+};
+
+export const save = async (parsedFile: PathLike): Promise<void> => {
+  const races = JSON.parse(
+    await fs.readFile(parsedFile).then((buffer) => buffer.toString())
+  ) as Race[];
+  await initDB();
+  await saveRace(races);
 };
 
 const main = async (
@@ -84,6 +92,7 @@ const main = async (
   endMonth: Date,
   urlFile: PathLike,
   htmlDir: PathLike,
+  parsedFile: PathLike,
   interval: number
 ) => {
   logger.level = "all";
@@ -102,9 +111,14 @@ const main = async (
   );
   await fetch(urlFile, htmlDir, interval);
 
-  logger.info(`parse html and save db from ${htmlDir.toLocaleString()}`);
-  const races = (await parse(htmlDir)).filter(Boolean);
-  logger.info(`${races.length}`);
+  logger.info(
+    `parse html and save db from ${htmlDir.toLocaleString()} to ${parsedFile.toLocaleString()}`
+  );
+  const races = await parse(htmlDir, parsedFile);
+  logger.info(`parsed ${races.length} races`);
+
+  logger.info(`save db from ${parsedFile.toLocaleString()}`);
+  await save(parsedFile);
 
   logger.info("complete");
 };
@@ -112,7 +126,8 @@ const main = async (
 main(
   new Date(2021, 7, 1),
   new Date(2022, 0, 1),
-  "downloads/test/race_url.txt",
-  "downloads/test/html",
+  "tmp/test/race_url.txt",
+  "tmp/test/html",
+  "tmp/test/parsed.json",
   500
 ).catch((e) => logger.error(e));

@@ -1,4 +1,4 @@
-downloads/
+tmp/
 *.sqlite3
 
 .vscode/

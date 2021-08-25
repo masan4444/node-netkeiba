@@ -6,19 +6,23 @@ import RaceResultTable from "./raceResultTable";
 import RaceTable from "./raceTable";
 import PayoffResultTable from "./payoffResultTable";
 
-export const saveRace = (race: Race): Promise<[void, void, void]> =>
+export const saveRace = (races: Race[]): Promise<[void, void, void]> =>
   Promise.all([
-    RaceTable.createOrUpdate([race]),
+    RaceTable.createOrUpdate(races),
     RaceResultTable.createOrUpdate(
-      race.raceResult.map((result) => ({ raceId: race.id, result }))
+      races.flatMap((race) =>
+        race.raceResult.map((result) => ({ raceId: race.id, result }))
+      )
     ),
     PayoffResultTable.createOrUpdate(
-      entries(race.payoffResult).flatMap(([betType, payoffs]) =>
-        (payoffs as Payoff<BetType>[]).map((payoff) => ({
-          raceId: race.id,
-          betType,
-          payoff,
-        }))
+      races.flatMap((race) =>
+        entries(race.payoffResult).flatMap(([betType, payoffs]) =>
+          (payoffs as Payoff<BetType>[]).map((payoff) => ({
+            raceId: race.id,
+            betType,
+            payoff,
+          }))
+        )
       )
     ),
   ]);
