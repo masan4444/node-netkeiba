@@ -1,5 +1,5 @@
-import DBCommon from "./DBCommon";
 import RaceResult from "../model/raceResult";
+import DBCommon from "./DBCommon";
 
 export default class RaceResultTable extends DBCommon {
   static tableName = "race_results" as const;

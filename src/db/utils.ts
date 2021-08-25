@@ -1,10 +1,10 @@
 import { entries } from "../lib";
-import Race from "../model/race";
 import { BetType } from "../model/bet";
 import { Payoff } from "../model/payoffResult";
+import Race from "../model/race";
+import PayoffResultTable from "./payoffResultTable";
 import RaceResultTable from "./raceResultTable";
 import RaceTable from "./raceTable";
-import PayoffResultTable from "./payoffResultTable";
 
 export const saveRace = (races: Race[]): Promise<[void, void, void]> =>
   Promise.all([

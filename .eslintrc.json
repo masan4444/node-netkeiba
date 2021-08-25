@@ -9,6 +9,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "airbnb-typescript/base",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
@@ -24,5 +26,13 @@
       "alwaysTryTypes": true
     }
   },
-  "rules": {}
+  "rules": {
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": { "order": "asc" },
+        "newlines-between": "never"
+      }
+    ]
+  }
 }

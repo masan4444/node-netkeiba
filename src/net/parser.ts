@@ -1,15 +1,15 @@
 /* eslint-disable radix */
-import HtmlParser, { HTMLElement } from "fast-html-parser";
 import path from "path";
 import { parse as parseDate } from "date-fns";
+import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { conditionRegExp, infoRegExp } from "../const";
 import { logger, parseTime } from "../lib";
+import * as Bet from "../model/bet";
 import Race, {
   RaceResult,
   RaceResultValidator,
   PayoffResult,
 } from "../model/race";
-import * as Bet from "../model/bet";
 
 const parseResult = (elements: HTMLElement[]): RaceResult => {
   const column = elements.map((e, i) =>

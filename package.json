@@ -7,7 +7,8 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "format": "prettier --write '**/*.{js,ts,json}'",
-    "lint": "npm run format & eslint --config .eslintrc.json --ext .js,.ts .",
+    "lint": "eslint --config .eslintrc.json --ext .js,.ts .",
+    "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts .",
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,7 +28,7 @@
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-import": "^2.24.2",
     "prettier": "^2.3.2",
     "ts-node": "^10.2.0",
     "typescript": "^4.3.5"

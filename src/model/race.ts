@@ -1,6 +1,3 @@
-import RaceResult, { RaceResultValidator } from "./raceResult";
-import PayoffResult from "./payoffResult";
-
 import {
   courses,
   oneWin,
@@ -12,6 +9,8 @@ import {
   twoWin,
   wethers,
 } from "../const";
+import PayoffResult from "./payoffResult";
+import RaceResult, { RaceResultValidator } from "./raceResult";
 
 type Course = typeof courses[number];
 type Surf = typeof surfs[number];

@@ -1,6 +1,6 @@
-import DBCommon from "./DBCommon";
-import { Payoff } from "../model/payoffResult";
 import { BetType } from "../model/bet";
+import { Payoff } from "../model/payoffResult";
+import DBCommon from "./DBCommon";
 
 export default class PayoffResultTable extends DBCommon {
   static tableName = "payoff_results" as const;

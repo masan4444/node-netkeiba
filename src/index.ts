@@ -1,14 +1,14 @@
 /* eslint-disable no-restricted-syntax */
-import fs from "fs/promises";
 import { PathLike } from "fs";
+import fs from "fs/promises";
 import path from "path";
+import { saveRace, initDB } from "./db/utils";
 import { logger, sleep } from "./lib";
-import login from "./net/login";
+import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
+import login from "./net/login";
 import parseRace from "./net/parser";
-import { saveRace, initDB } from "./db/utils";
-import Race from "./model/race";
 
 export const crawl = async (
   startMonth: Date,
