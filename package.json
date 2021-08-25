@@ -24,6 +24,9 @@
   },
   "author": "masan4444",
   "license": "ISC",
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">= 10.13"
   },
