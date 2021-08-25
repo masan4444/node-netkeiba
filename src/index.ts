@@ -23,7 +23,7 @@ export const crawl = async (
     endMonth,
     interval
   )) {
-    await Promise.all([fs.appendFile(urlFile, `${raceUrl}\n`)]);
+    await fs.appendFile(urlFile, `${raceUrl}\n`);
     count += 1;
   }
   return count;
