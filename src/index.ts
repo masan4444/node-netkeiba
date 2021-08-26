@@ -3,12 +3,18 @@ import { PathLike } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { saveRace, initDB } from "./db/utils";
-import { logger, setLogger, sleep } from "./lib";
+import { logger, sleep } from "./lib";
 import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
 // import login from "./net/login";
 import parseRace from "./net/parser";
+
+export const setLoggerLevel = (
+  level: "mark" | "fatal" | "error" | "warn" | "info" | "debug" | "trace"
+): void => {
+  logger.level = level;
+};
 
 export const crawl = async (
   startMonth: Date,
@@ -132,4 +138,4 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
 //   500
 // ).catch((e) => logger.error(e));
 
-export { setLogger, raceUrlGenerator };
+export { raceUrlGenerator };
