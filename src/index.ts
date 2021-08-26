@@ -7,7 +7,7 @@ import { logger, setLogger } from "./lib";
 import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
-// import login from "./net/login";
+import login from "./net/login";
 import parseRace from "./net/parser";
 
 export const crawl = async (
@@ -129,4 +129,4 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
 //   500
 // ).catch((e) => logger.error(e));
 
-export { setLogger, raceUrlGenerator, raceHtmlGenerator };
+export { setLogger, raceUrlGenerator, raceHtmlGenerator, parseRace, login };
