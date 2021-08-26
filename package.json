@@ -23,7 +23,7 @@
     "dist"
   ],
   "engines": {
-    "node": "^12.9.0"
+    "node": ">=12.9.0"
   },
   "devDependencies": {
     "@types/fast-html-parser": "^1.0.2",
