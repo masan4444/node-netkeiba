@@ -1,5 +1,6 @@
+import { URL } from "url";
 import { format, addMonths } from "date-fns";
-import { client, logger, sleep } from "../lib";
+import { client, logger, sleep, baseURL } from "../lib";
 
 async function* dayUrlGenerator(
   start: Date,
@@ -29,6 +30,8 @@ export default async function* raceUrlGenerator(
   for await (const dayUrl of dayUrlGenerator(start, end)) {
     await sleep(interval);
     const html = await client.get(dayUrl).then((res) => res.data as string);
-    yield* [...html.matchAll(/\/race\/\d+\//g)].map((match) => match[0]);
+    yield* [...html.matchAll(/\/race\/\d+\//g)].map(
+      (match) => new URL(match[0], baseURL).href
+    );
   }
 }

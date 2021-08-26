@@ -34,6 +34,8 @@ export const client = axiosBase.create({
   baseURL: `https://db.${domain}/`,
 });
 
+export const { baseURL } = client.defaults;
+
 export const entries = Object.entries as <T>(
   o: T
 ) => [Extract<keyof T, string>, T[keyof T]][];
