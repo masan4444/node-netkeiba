@@ -18,7 +18,12 @@ Log4js.configure({
   },
 });
 
-export const logger = Log4js.getLogger("netkeiba");
+// eslint-disable-next-line import/no-mutable-exports
+export let logger = Log4js.getLogger("netkeiba");
+
+export const setLogger = (customLogger: Log4js.Logger): void => {
+  logger = customLogger;
+};
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
