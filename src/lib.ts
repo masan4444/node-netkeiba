@@ -3,7 +3,21 @@ import iconv from "iconv-lite";
 import Log4js from "log4js";
 import { domain } from "./const";
 
-Log4js.configure("log-config.json");
+Log4js.configure({
+  appenders: {
+    console: {
+      type: "console",
+      level: "all",
+    },
+  },
+  categories: {
+    default: {
+      appenders: ["console"],
+      level: "all",
+    },
+  },
+});
+
 export const logger = Log4js.getLogger("netkeiba");
 
 export const sleep = (ms: number): Promise<void> =>

@@ -7,8 +7,14 @@ import { logger, sleep } from "./lib";
 import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
-import login from "./net/login";
+// import login from "./net/login";
 import parseRace from "./net/parser";
+
+export const setLoggerLevel = (
+  level: "mark" | "fatal" | "error" | "warn" | "info" | "debug" | "trace"
+): void => {
+  logger.level = level;
+};
 
 export const crawl = async (
   startMonth: Date,
@@ -87,47 +93,49 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
   await saveRace(races);
 };
 
-const main = async (
-  startMonth: Date,
-  endMonth: Date,
-  urlFile: PathLike,
-  htmlDir: PathLike,
-  parsedFile: PathLike,
-  interval: number
-) => {
-  logger.level = "all";
+// const main = async (
+//   startMonth: Date,
+//   endMonth: Date,
+//   urlFile: PathLike,
+//   htmlDir: PathLike,
+//   parsedFile: PathLike,
+//   interval: number
+// ) => {
+//   logger.level = "all";
 
-  logger.info("login");
-  if (await login("loginid@example.com", "password")) {
-    logger.info("success login");
-  }
+//   logger.info("login");
+//   if (await login("loginid@example.com", "password")) {
+//     logger.info("success login");
+//   }
 
-  logger.info(`crawl race urls to ${urlFile.toLocaleString()}`);
-  const count = await crawl(startMonth, endMonth, urlFile, interval);
-  logger.debug(`crawled ${count} races`);
+//   logger.info(`crawl race urls to ${urlFile.toLocaleString()}`);
+//   const count = await crawl(startMonth, endMonth, urlFile, interval);
+//   logger.debug(`crawled ${count} races`);
 
-  logger.info(
-    `fetch html files from ${urlFile.toLocaleString()} to ${htmlDir.toLocaleString()}`
-  );
-  await fetch(urlFile, htmlDir, interval);
+//   logger.info(
+//     `fetch html files from ${urlFile.toLocaleString()} to ${htmlDir.toLocaleString()}`
+//   );
+//   await fetch(urlFile, htmlDir, interval);
 
-  logger.info(
-    `parse html and save db from ${htmlDir.toLocaleString()} to ${parsedFile.toLocaleString()}`
-  );
-  const races = await parse(htmlDir, parsedFile);
-  logger.info(`parsed ${races.length} races`);
+//   logger.info(
+//     `parse html and save db from ${htmlDir.toLocaleString()} to ${parsedFile.toLocaleString()}`
+//   );
+//   const races = await parse(htmlDir, parsedFile);
+//   logger.info(`parsed ${races.length} races`);
 
-  logger.info(`save db from ${parsedFile.toLocaleString()}`);
-  await save(parsedFile);
+//   logger.info(`save db from ${parsedFile.toLocaleString()}`);
+//   await save(parsedFile);
 
-  logger.info("complete");
-};
+//   logger.info("complete");
+// };
 
-main(
-  new Date(2021, 7, 1),
-  new Date(2022, 0, 1),
-  "tmp/test/race_url.txt",
-  "tmp/test/html",
-  "tmp/test/parsed.json",
-  500
-).catch((e) => logger.error(e));
+// main(
+//   new Date(2021, 7, 1),
+//   new Date(2022, 0, 1),
+//   "tmp/test/race_url.txt",
+//   "tmp/test/html",
+//   "tmp/test/parsed.json",
+//   500
+// ).catch((e) => logger.error(e));
+
+export { raceUrlGenerator };
