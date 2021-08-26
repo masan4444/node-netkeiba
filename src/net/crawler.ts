@@ -16,6 +16,7 @@ async function* dayUrlGenerator(
       break;
     }
     logger.debug(`${format(month, "yyyy/MM")}: ${dayUrls.length} days`);
+    logger.warn(`${format(month, "yyyy/MM")}: ${dayUrls.length} days`);
     yield* dayUrls;
   }
 }
