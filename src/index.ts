@@ -3,7 +3,7 @@ import { PathLike } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { saveRace, initDB } from "./db/utils";
-import { logger, setLogger, sleep } from "./lib";
+import { logger, setLogger } from "./lib";
 import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
@@ -41,11 +41,8 @@ export const fetch = async (
   let count = 0;
   let progress = 0;
   await fs.mkdir(htmlDir, { recursive: true });
-  for await (const [id, html] of raceHtmlGenerator(raceUrls)) {
-    await Promise.all([
-      fs.writeFile(path.join(htmlDir.toString(), `${id}.html`), html),
-      sleep(interval),
-    ]);
+  for await (const [id, html] of raceHtmlGenerator(raceUrls, interval)) {
+    await fs.writeFile(path.join(htmlDir.toString(), `${id}.html`), html);
     if (length > 100 && count === Math.ceil(progress)) {
       logger.debug(`progress: ${Math.ceil((progress / length) * 100)}%`);
       progress += length / 100;
@@ -132,4 +129,4 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
 //   500
 // ).catch((e) => logger.error(e));
 
-export { setLogger, raceUrlGenerator };
+export { setLogger, raceUrlGenerator, raceHtmlGenerator };
