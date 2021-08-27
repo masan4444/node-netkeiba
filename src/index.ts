@@ -3,7 +3,7 @@ import { PathLike } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { saveRace, initDB } from "./db/utils";
-import { logger, setLogger } from "./lib";
+import { logger, setCookie, setLogger } from "./lib";
 import Race from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
@@ -129,4 +129,11 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
 //   500
 // ).catch((e) => logger.error(e));
 
-export { setLogger, raceUrlGenerator, raceHtmlGenerator, parseRace, login };
+export {
+  setLogger,
+  raceUrlGenerator,
+  raceHtmlGenerator,
+  parseRace,
+  login,
+  setCookie,
+};

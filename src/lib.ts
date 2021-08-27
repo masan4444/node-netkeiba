@@ -34,6 +34,10 @@ export const client = axiosBase.create({
   baseURL: `https://db.${domain}/`,
 });
 
+export const setCookie = (cookie: string): void => {
+  client.defaults.headers = { common: { Cookie: cookie } };
+};
+
 export const { baseURL } = client.defaults;
 
 export const entries = Object.entries as <T>(
