@@ -41,7 +41,7 @@ export const fetch = async (
   let count = 0;
   let progress = 0;
   await fs.mkdir(htmlDir, { recursive: true });
-  for await (const [id, html] of raceHtmlGenerator(raceUrls, interval)) {
+  for await (const { id, html } of raceHtmlGenerator(raceUrls, interval)) {
     await fs.writeFile(path.join(htmlDir.toString(), `${id}.html`), html);
     if (length > 100 && count === Math.ceil(progress)) {
       logger.debug(`progress: ${Math.ceil((progress / length) * 100)}%`);

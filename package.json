@@ -14,7 +14,7 @@
     "prepare": "npm run build && husky install"
   },
   "lint-staged": {
-    "*.{js,ts}": ["prettier --write", "eslint --fix --config .eslintrc.json"],
+    "*.{js,ts}": ["prettier --write", "npm run lint:fix"],
     "*.json": ["prettier --write"]
   },
   "author": "masan4444",
