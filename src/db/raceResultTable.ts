@@ -22,7 +22,7 @@ export default class RaceResultTable extends DBCommon {
 
       time REAL,
       margin TEXT NOT NULL,
-      time_figure REAL,
+      time_figure INTEGER,
       corner_ranking1 INTEGER,
       corner_ranking2 INTEGER,
       corner_ranking3 INTEGER,
