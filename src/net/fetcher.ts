@@ -5,12 +5,21 @@ import { client, sleep } from "../lib";
 export default async function* raceHtmlGenerator(
   urls: string[],
   interval: number
-): AsyncGenerator<[string, string], void, undefined> {
+): AsyncGenerator<
+  {
+    url: string;
+    id: string;
+    html: string;
+  },
+  void,
+  undefined
+> {
   for await (const url of urls) {
-    yield [
-      path.parse(url).name,
-      await client.get(url).then((res) => res.data as string),
-    ];
+    yield {
+      url,
+      id: path.parse(url).name,
+      html: await client.get(url).then((res) => res.data as string),
+    };
     await sleep(interval);
   }
 }
