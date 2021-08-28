@@ -3,7 +3,7 @@ import path from "path";
 import { parse as parseDate } from "date-fns";
 import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { conditionRegExp, infoRegExp } from "../const";
-import { logger, parseTime } from "../lib";
+import { parseTime } from "../lib";
 import * as Bet from "../model/bet";
 import Race, {
   RaceResult,
@@ -31,7 +31,7 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
 
     time: parseTime(column[7]),
     margin: column[8],
-    timeFigure: Number(column[9]) || undefined,
+    timeFigure: parseInt(column[9]) || undefined,
     cornerRanking: column[10].split("-").map((n) => parseInt(n)),
     lastPhaseTime: parseTime(column[11]),
 
@@ -48,8 +48,7 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
   };
 
   if (!RaceResultValidator.is(raceResult)) {
-    logger.error("RaceResultParseError: ");
-    logger.error(raceResult);
+    throw new Error(`failed to parse race result`);
   }
   return raceResult;
 };
