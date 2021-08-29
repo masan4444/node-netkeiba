@@ -98,7 +98,7 @@ const main = async (
   logger.level = "all";
 
   logger.info("Login");
-  const cookies = await login("masanori0213@gmail.com", "VqwGzPSQx");
+  const cookies = await login("loginid", "password");
 
   if (
     cookies.find((c) => c.key === "nkauth") &&

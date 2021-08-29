@@ -89,7 +89,7 @@ const parseRace = (url: string, html: string): Race => {
     .querySelector(".smalltxt")
     ?.firstChild.rawText.match(infoRegExp)?.groups;
   if (!name || !raceNumber || !condition || !info) {
-    throw new Error(`IntroParseError: ${url}`);
+    throw new Error(`failed to parse intro ${url}`);
   }
 
   const raceResult: RaceResult[] | undefined = root
