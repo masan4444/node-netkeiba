@@ -13,7 +13,7 @@ export default class RaceResultTable extends DBCommon {
 
       frame_number INTEGER NOT NULL,
       horse_number INTEGER NOT NULL,
-      horse_id TEXT NOT NULL UNIQUE,
+      horse_id TEXT NOT NULL,
 
       sex TEXT NOT NULL,
       age INTEGER NOT NULL,
@@ -42,20 +42,20 @@ export default class RaceResultTable extends DBCommon {
     )`,
     `CREATE INDEX ranking_index ON ${RaceResultTable.tableName}(race_id, ranking)`,
     `CREATE INDEX popularity_index ON ${RaceResultTable.tableName}(race_id, popularity)`,
+    `CREATE INDEX frame_number_index ON ${RaceResultTable.tableName}(race_id, frame_number)`,
     `CREATE UNIQUE INDEX horse_id_index ON ${RaceResultTable.tableName}(race_id, horse_id)`,
   ];
 
   static column_cnt = 25 as const;
 
   static async createOrUpdate(
-    data: { raceId: string; result: RaceResult }[]
+    data: { raceId: string; result: RaceResult }[],
+    update?: boolean
   ): Promise<void> {
     const stmt = this.DB().prepare(
-      `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
-        this.column_cnt
-      )
-        .fill("?")
-        .join(",")})`
+      `INSERT ${update ? "or REPLACE" : ""} into ${
+        this.tableName
+      } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
     );
     data.forEach((datus) => {
       const { raceId, result } = datus;

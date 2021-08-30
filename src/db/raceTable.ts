@@ -28,17 +28,16 @@ export default class RaceTable extends DBCommon {
 
       PRIMARY KEY(id)
     )`,
+    `CREATE INDEX id_index ON ${RaceTable.tableName}(id)`,
   ];
 
   static column_cnt = 18;
 
-  static async createOrUpdate(races: Race[]): Promise<void> {
+  static async createOrUpdate(races: Race[], update?: boolean): Promise<void> {
     const stmt = this.DB().prepare(
-      `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
-        this.column_cnt
-      )
-        .fill("?")
-        .join(",")})`
+      `INSERT ${update ? "or REPLACE" : ""} into ${
+        this.tableName
+      } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
     );
     races.forEach((race) => {
       stmt.run(

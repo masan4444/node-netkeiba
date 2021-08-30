@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
 import { PathLike } from "fs";
 import fs from "fs/promises";

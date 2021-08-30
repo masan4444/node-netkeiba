@@ -16,19 +16,19 @@ export default class PayoffResultTable extends DBCommon {
       earn INTEGER NOT NULL,
       popularity INTEGER NOT NULL
     )`,
+    `CREATE INDEX race_id_index ON ${PayoffResultTable.tableName}(race_id)`,
   ];
 
   static column_cnt = 7 as const;
 
   static async createOrUpdate(
-    data: { raceId: string; betType: string; payoff: Payoff<BetType> }[]
+    data: { raceId: string; betType: string; payoff: Payoff<BetType> }[],
+    update?: boolean
   ): Promise<void> {
     const stmt = this.DB().prepare(
-      `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
-        this.column_cnt
-      )
-        .fill("?")
-        .join(",")})`
+      `INSERT ${update ? "or REPLACE" : ""} into ${
+        this.tableName
+      } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
     );
     data.forEach((datus) => {
       const { raceId, betType, payoff } = datus;
