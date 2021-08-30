@@ -20,10 +20,10 @@ export default class PayoffResultTable extends DBCommon {
 
   static column_cnt = 7 as const;
 
-  static createOrUpdate(
+  static async createOrUpdate(
     data: { raceId: string; betType: string; payoff: Payoff<BetType> }[]
   ): Promise<void> {
-    const stmt = this.db.prepare(
+    const stmt = this.DB().prepare(
       `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
         this.column_cnt
       )

@@ -51,7 +51,7 @@ export default class RaceResultTable extends DBCommon {
   static async createOrUpdate(
     data: { raceId: string; result: RaceResult }[]
   ): Promise<void> {
-    const stmt = this.db.prepare(
+    const stmt = this.DB().prepare(
       `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
         this.column_cnt
       )

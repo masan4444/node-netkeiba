@@ -33,7 +33,7 @@ export default class RaceTable extends DBCommon {
   static column_cnt = 18;
 
   static async createOrUpdate(races: Race[]): Promise<void> {
-    const stmt = this.db.prepare(
+    const stmt = this.DB().prepare(
       `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
         this.column_cnt
       )

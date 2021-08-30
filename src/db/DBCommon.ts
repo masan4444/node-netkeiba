@@ -1,11 +1,23 @@
 import sqlite3 from "sqlite3";
 
-export default abstract class DBCommon {
-  static dbFileName = "netkeiba.sqlite3" as const;
+let DBFile: string | undefined;
+let DB: sqlite3.Database | undefined;
 
-  static readonly db: sqlite3.Database = new sqlite3.Database(
-    DBCommon.dbFileName
-  );
+export const setDB = (filename: string): void => {
+  DBFile = filename;
+};
+
+export default abstract class DBCommon {
+  static readonly DB = (): sqlite3.Database => {
+    if (DB) {
+      return DB;
+    }
+    if (DBFile) {
+      DB = new sqlite3.Database(DBFile);
+      return DB;
+    }
+    throw new Error("no database setting, use setDB()");
+  };
 
   static readonly tableName: string;
 
@@ -13,28 +25,26 @@ export default abstract class DBCommon {
 
   static init(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.db.get(
+      const db = this.DB();
+      db.get(
         `SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND
-          name='${this.tableName}'`,
+            name='${this.tableName}'`,
         (err, row: { "COUNT(*)": number }) => {
           if (err) {
             reject(err);
           }
 
           if (row["COUNT(*)"] !== 1) {
-            this.db.serialize(() => {
+            db.serialize(() => {
               this.firstQuerys.slice(0, -1).forEach((query) => {
-                this.db.run(query);
+                db.run(query);
               });
-              this.db.run(
-                this.firstQuerys[this.firstQuerys.length - 1],
-                (e) => {
-                  if (e) {
-                    reject(e);
-                  }
-                  resolve();
+              db.run(this.firstQuerys[this.firstQuerys.length - 1], (e) => {
+                if (e) {
+                  reject(e);
                 }
-              );
+                resolve();
+              });
             });
           } else {
             resolve();

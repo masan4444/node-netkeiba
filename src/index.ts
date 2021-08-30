@@ -1,4 +1,6 @@
+import { initDB, saveRace } from "./db/utils";
 import { setCookie, setLogger } from "./lib";
+import Race, { RaceResult, PayoffResult } from "./model/race";
 import raceUrlGenerator from "./net/crawler";
 import raceHtmlGenerator from "./net/fetcher";
 import login from "./net/login";
@@ -11,4 +13,9 @@ export {
   parseRace,
   login,
   setCookie,
+  initDB,
+  saveRace,
+  Race,
+  RaceResult,
+  PayoffResult,
 };

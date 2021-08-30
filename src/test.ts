@@ -2,15 +2,17 @@
 import { PathLike } from "fs";
 import fs from "fs/promises";
 import path from "path";
-import { saveRace, initDB } from "./db/utils";
+import { parse as parseDate } from "date-fns";
 import { logger } from "./lib";
-import Race from "./model/race";
 import {
   raceUrlGenerator,
   raceHtmlGenerator,
   parseRace,
   login,
   setCookie,
+  initDB,
+  saveRace,
+  Race,
 } from "./index";
 
 export const crawl = async (
@@ -83,7 +85,7 @@ export const save = async (parsedFile: PathLike): Promise<void> => {
   const races = JSON.parse(
     await fs.readFile(parsedFile).then((buffer) => buffer.toString())
   ) as Race[];
-  await initDB();
+  await initDB("tmp/db.sqlite3");
   await saveRace(races);
 };
 
@@ -110,6 +112,8 @@ const main = async (
       .join("; ");
     setCookie(cookie);
     logger.info("Login succeeded");
+  } else {
+    logger.warn("Login failed");
   }
 
   // logger.info(`Crawl race urls to ${urlFile.toLocaleString()}`);
@@ -128,15 +132,15 @@ const main = async (
 
   logger.info(`Parsed ${races.length} races`);
 
-  // logger.info(`Save db from ${parsedFile.toLocaleString()}`);
-  // await save(parsedFile);
+  logger.info(`Save db from ${parsedFile.toLocaleString()}`);
+  await save(parsedFile);
 
   logger.info("complete");
 };
 
 main(
-  new Date(2021, 7, 1),
-  new Date(2022, 0, 1),
+  parseDate("2021/08", "yyyy/MM", new Date()),
+  parseDate("2021/09", "yyyy/MM", new Date()),
   "tmp/race_url.txt",
   "tmp/html",
   "tmp/parsed.json",
