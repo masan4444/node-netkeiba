@@ -30,9 +30,7 @@ export const saveRace = (races: Race[]): Promise<[void, void, void]> =>
 
 export const initDB = async (filename: string): Promise<void> => {
   setDB(filename);
-  await Promise.all([
-    RaceTable.init(),
-    RaceResultTable.init(),
-    PayoffResultTable.init(),
-  ]);
+  await RaceTable.init();
+  await RaceResultTable.init();
+  await PayoffResultTable.init();
 };
