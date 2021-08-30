@@ -42,7 +42,6 @@ export default class RaceResultTable extends DBCommon {
     )`,
     `CREATE INDEX ranking_index ON ${RaceResultTable.tableName}(race_id, ranking)`,
     `CREATE INDEX popularity_index ON ${RaceResultTable.tableName}(race_id, popularity)`,
-    `CREATE UNIQUE INDEX frame_number_index ON ${RaceResultTable.tableName}(race_id, frame_number)`,
     `CREATE UNIQUE INDEX horse_id_index ON ${RaceResultTable.tableName}(race_id, horse_id)`,
   ];
 
