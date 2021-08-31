@@ -46,7 +46,7 @@ type Race = {
   dayCnt: number; // 8
 
   age: number; // 3
-  ageHigher: boolean; // true (以上)
+  ageHigher?: "以上"; // true (以上)
   raceClass: RaceClass; // オープン
   detail: string; // (国際)(指)(定量)
 

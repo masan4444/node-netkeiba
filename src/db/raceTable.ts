@@ -22,7 +22,7 @@ export default class RaceTable extends DBCommon {
       monthCnt INTEGER NOT NULL,
       dayCnt INTEGER NOT NULL,
       age INTEGER NOT NULL,
-      ageHigher TEXT NOT NULL,
+      ageHigher TEXT,
       raceClass TEXT NOT NULL,
       detail TEXT,
       horseCnt INTEGER NOT NULL,

@@ -128,7 +128,7 @@ const parseRace = (url: string, html: string): Race => {
     monthCnt: parseInt(monthCnt),
     dayCnt: parseInt(dayCnt),
     age: parseInt(age),
-    ageHigher: !!ageHigher,
+    ageHigher: ageHigher as Race["ageHigher"],
     raceClass: raceClass as Race["raceClass"],
     detail,
     horseCnt: raceResult.length,
