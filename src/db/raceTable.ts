@@ -25,13 +25,17 @@ export default class RaceTable extends DBCommon {
       ageHigher TEXT NOT NULL,
       raceClass TEXT NOT NULL,
       detail TEXT,
+      horseCnt INTEGER NOT NULL,
+      entryCnt INTEGER NOT NULL,
+      goalCnt INTEGER NOT NULL,
+      rankCnt INTEGER NOT NULL,
 
       PRIMARY KEY(id)
     )`,
     `CREATE INDEX id_index ON ${RaceTable.tableName}(id)`,
   ];
 
-  static column_cnt = 18;
+  static column_cnt = 22;
 
   static async createOrUpdate(races: Race[], update?: boolean): Promise<void> {
     const stmt = this.DB().prepare(
@@ -59,7 +63,11 @@ export default class RaceTable extends DBCommon {
         race.age,
         race.ageHigher,
         race.raceClass,
-        race.detail
+        race.detail,
+        race.horseCnt,
+        race.entryCnt,
+        race.goalCnt,
+        race.rankCnt
       );
     });
     return new Promise((resolve, reject) => {

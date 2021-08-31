@@ -50,6 +50,11 @@ type Race = {
   raceClass: RaceClass; // オープン
   detail: string; // (国際)(指)(定量)
 
+  horseCnt: number; // 出走予定馬数
+  entryCnt: number; // 出走馬数
+  goalCnt: number; // ゴールした馬数
+  rankCnt: number; // ゴールが認定された馬数
+
   raceResult: RaceResult[];
   payoffResult: PayoffResult;
 };

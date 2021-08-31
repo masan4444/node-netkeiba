@@ -103,6 +103,10 @@ const parseRace = (url: string, html: string): Race => {
     .map(parsePayoff)
     .reduce((acc, e) => ({ ...acc, ...e }), {});
 
+  if (!raceResult?.length) {
+    throw new Error(`no race result ${url}`);
+  }
+
   const { steeple, surf, turn, line, dist, wether, trackCond, startTime } =
     condition;
   const { date, monthCnt, course, dayCnt, age, ageHigher, raceClass, detail } =
@@ -127,7 +131,16 @@ const parseRace = (url: string, html: string): Race => {
     ageHigher: !!ageHigher,
     raceClass: raceClass as Race["raceClass"],
     detail,
-    raceResult: raceResult as Race["raceResult"],
+    horseCnt: raceResult.length,
+    entryCnt: raceResult.filter(
+      (result) => !["取", "除"].includes(result.ranking as string)
+    ).length,
+    goalCnt: raceResult.filter(
+      (result) => !["取", "除", "中"].includes(result.ranking as string)
+    ).length,
+    rankCnt: raceResult.filter((result) => typeof result.ranking === "number")
+      .length,
+    raceResult,
     payoffResult,
   };
 };
