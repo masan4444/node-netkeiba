@@ -45,7 +45,6 @@ export default abstract class DBCommon {
   static init(): Promise<void> {
     return new Promise((resolve, reject) => {
       const db = this.DB();
-      db.exec("BEGIN TRANSACTION");
       db.get(
         `SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND
             name='${this.tableName}'`,
@@ -55,6 +54,7 @@ export default abstract class DBCommon {
             return;
           }
           if (row["COUNT(*)"] !== 1) {
+            db.exec("BEGIN TRANSACTION");
             (async () => {
               for (const [i, query] of this.firstQuerys.entries()) {
                 await db.runAsync(query);

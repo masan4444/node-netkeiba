@@ -38,7 +38,9 @@ export default class RaceTable extends DBCommon {
   static column_cnt = 22;
 
   static async createOrUpdate(races: Race[], update?: boolean): Promise<void> {
-    const stmt = this.DB().prepare(
+    const db = this.DB();
+    db.exec("BEGIN TRANSACTION");
+    const stmt = db.prepare(
       `INSERT ${update ? "or REPLACE" : ""} into ${
         this.tableName
       } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
@@ -70,8 +72,9 @@ export default class RaceTable extends DBCommon {
         race.rankCnt
       );
     });
+    stmt.finalize();
     return new Promise((resolve, reject) => {
-      stmt.finalize((err) => (err ? reject(err) : resolve()));
+      db.run("COMMIT", (err) => (err ? reject(err) : resolve()));
     });
   }
 
