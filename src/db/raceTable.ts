@@ -64,7 +64,7 @@ export default class RaceTable extends DBCommon {
         race.trackCond,
         formatTZ(
           utcToZonedTime(race.startTime, timeZone),
-          "yyyy-MM-ddTHH:mm:ssXXX",
+          "yyyy-MM-dd'T'HH:mm:ssXXX",
           { timeZone }
         ),
         race.monthCnt,
