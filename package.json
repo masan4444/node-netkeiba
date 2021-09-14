@@ -53,6 +53,7 @@
     "axios": "^0.21.1",
     "axios-cookiejar-support": "^1.0.1",
     "date-fns": "^2.23.0",
+    "date-fns-tz": "^1.1.6",
     "fast-html-parser": "^1.0.1",
     "fp-ts": "^2.11.1",
     "iconv-lite": "^0.6.3",

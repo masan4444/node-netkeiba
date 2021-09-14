@@ -1,5 +1,8 @@
+import { utcToZonedTime, format as formatTZ } from "date-fns-tz";
 import Race from "../model/race";
 import DBCommon from "./DBCommon";
+
+const timeZone = "Asia/Tokyo";
 
 export default class RaceTable extends DBCommon {
   static tableName = "races" as const;
@@ -59,7 +62,11 @@ export default class RaceTable extends DBCommon {
         race.dist,
         race.wether,
         race.trackCond,
-        race.startTime,
+        formatTZ(
+          utcToZonedTime(race.startTime, timeZone),
+          "yyyy-MM-ddTHH:mm:ssXXX",
+          { timeZone }
+        ),
         race.monthCnt,
         race.dayCnt,
         race.age,
