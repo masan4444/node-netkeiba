@@ -17,7 +17,7 @@ export default class RaceTable extends DBCommon {
       steeple TEXT,
       surf TEXT NOT NULL,
       turn TEXT,
-      outer TEXT,
+      line TEXT,
       dist INTEGER NOT NULL,
       wether TEXT NOT NULL,
       track_cond TEXT NOT NULL,
