@@ -1,4 +1,3 @@
-### Time (10 years)
+# netkeiba
 
-fetch: 7h48m
-parse: 1m
+see [node-netkeiba-cli](https://github.com/masan4444/node-netkeiba-cli)
