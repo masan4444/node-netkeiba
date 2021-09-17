@@ -46,9 +46,14 @@ type Race = {
   dayCnt: number; // 8
 
   age: number; // 3
-  ageHigher: boolean; // true (以上)
+  ageHigher?: "以上"; // true (以上)
   raceClass: RaceClass; // オープン
   detail: string; // (国際)(指)(定量)
+
+  horseCnt: number; // 出走予定馬数
+  entryCnt: number; // 出走馬数
+  goalCnt: number; // ゴールした馬数
+  rankCnt: number; // ゴールが認定された馬数
 
   raceResult: RaceResult[];
   payoffResult: PayoffResult;

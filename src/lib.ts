@@ -1,10 +1,13 @@
+import Log4js from "@log4js-node/log4js-api";
 import axiosBase from "axios";
 import iconv from "iconv-lite";
-import Log4js from "log4js";
 import { domain } from "./const";
 
-Log4js.configure("log-config.json");
-export const logger = Log4js.getLogger("netkeiba");
+// eslint-disable-next-line import/no-mutable-exports
+export let logger = Log4js.getLogger("netkeiba");
+export const setLogger = (customLogger: Log4js.Logger): void => {
+  logger = customLogger;
+};
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,6 +17,12 @@ export const client = axiosBase.create({
   transformResponse: (data) => iconv.decode(data, "euc-jp"),
   baseURL: `https://db.${domain}/`,
 });
+
+export const setCookie = (cookie: string): void => {
+  client.defaults.headers = { common: { Cookie: cookie } };
+};
+
+export const { baseURL } = client.defaults;
 
 export const entries = Object.entries as <T>(
   o: T

@@ -1,5 +1,8 @@
+import { utcToZonedTime, format as formatTZ } from "date-fns-tz";
 import Race from "../model/race";
 import DBCommon from "./DBCommon";
+
+const timeZone = "Asia/Tokyo";
 
 export default class RaceTable extends DBCommon {
   static tableName = "races" as const;
@@ -9,36 +12,41 @@ export default class RaceTable extends DBCommon {
       id TEXT NOT NULL,
 
       course TEXT NOT NULL,
-      raceNumber INTEGER NOT NULL,
+      race_number INTEGER NOT NULL,
       name TEXT NOT NULL,
       steeple TEXT,
       surf TEXT NOT NULL,
       turn TEXT,
-      outer TEXT,
+      line TEXT,
       dist INTEGER NOT NULL,
       wether TEXT NOT NULL,
-      trackCond TEXT NOT NULL,
-      startTime NOT NULL,
-      monthCnt INTEGER NOT NULL,
-      dayCnt INTEGER NOT NULL,
+      track_cond TEXT NOT NULL,
+      start_time NOT NULL,
+      month_cnt INTEGER NOT NULL,
+      day_cnt INTEGER NOT NULL,
       age INTEGER NOT NULL,
-      ageHigher TEXT NOT NULL,
-      raceClass TEXT NOT NULL,
+      age_higher TEXT,
+      race_class TEXT NOT NULL,
       detail TEXT,
+      horse_cnt INTEGER NOT NULL,
+      entry_cnt INTEGER NOT NULL,
+      goal_cnt INTEGER NOT NULL,
+      rank_cnt INTEGER NOT NULL,
 
       PRIMARY KEY(id)
     )`,
+    `CREATE INDEX id_index ON ${RaceTable.tableName}(id)`,
   ];
 
-  static column_cnt = 18;
+  static column_cnt = 22;
 
-  static async createOrUpdate(races: Race[]): Promise<void> {
-    const stmt = this.db.prepare(
-      `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
-        this.column_cnt
-      )
-        .fill("?")
-        .join(",")})`
+  static async createOrUpdate(races: Race[], update?: boolean): Promise<void> {
+    const db = this.DB();
+    db.exec("BEGIN TRANSACTION");
+    const stmt = db.prepare(
+      `INSERT ${update ? "or REPLACE" : ""} into ${
+        this.tableName
+      } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
     );
     races.forEach((race) => {
       stmt.run(
@@ -54,17 +62,26 @@ export default class RaceTable extends DBCommon {
         race.dist,
         race.wether,
         race.trackCond,
-        race.startTime,
+        formatTZ(
+          utcToZonedTime(race.startTime, timeZone),
+          "yyyy-MM-dd'T'HH:mm:ssXXX",
+          { timeZone }
+        ),
         race.monthCnt,
         race.dayCnt,
         race.age,
         race.ageHigher,
         race.raceClass,
-        race.detail
+        race.detail,
+        race.horseCnt,
+        race.entryCnt,
+        race.goalCnt,
+        race.rankCnt
       );
     });
+    stmt.finalize();
     return new Promise((resolve, reject) => {
-      stmt.finalize((err) => (err ? reject(err) : resolve()));
+      db.run("COMMIT", (err) => (err ? reject(err) : resolve()));
     });
   }
 

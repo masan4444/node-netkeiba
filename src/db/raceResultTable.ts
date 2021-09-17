@@ -13,7 +13,7 @@ export default class RaceResultTable extends DBCommon {
 
       frame_number INTEGER NOT NULL,
       horse_number INTEGER NOT NULL,
-      horse_id TEXT NOT NULL UNIQUE,
+      horse_id TEXT NOT NULL,
 
       sex TEXT NOT NULL,
       age INTEGER NOT NULL,
@@ -22,7 +22,7 @@ export default class RaceResultTable extends DBCommon {
 
       time REAL,
       margin TEXT NOT NULL,
-      time_figure REAL,
+      time_figure INTEGER,
       corner_ranking1 INTEGER,
       corner_ranking2 INTEGER,
       corner_ranking3 INTEGER,
@@ -42,21 +42,22 @@ export default class RaceResultTable extends DBCommon {
     )`,
     `CREATE INDEX ranking_index ON ${RaceResultTable.tableName}(race_id, ranking)`,
     `CREATE INDEX popularity_index ON ${RaceResultTable.tableName}(race_id, popularity)`,
-    `CREATE UNIQUE INDEX frame_number_index ON ${RaceResultTable.tableName}(race_id, frame_number)`,
+    `CREATE INDEX frame_number_index ON ${RaceResultTable.tableName}(race_id, frame_number)`,
     `CREATE UNIQUE INDEX horse_id_index ON ${RaceResultTable.tableName}(race_id, horse_id)`,
   ];
 
   static column_cnt = 25 as const;
 
   static async createOrUpdate(
-    data: { raceId: string; result: RaceResult }[]
+    data: { raceId: string; result: RaceResult }[],
+    update?: boolean
   ): Promise<void> {
-    const stmt = this.db.prepare(
-      `INSERT or REPLACE into ${this.tableName} VALUES (${new Array(
-        this.column_cnt
-      )
-        .fill("?")
-        .join(",")})`
+    const db = this.DB();
+    db.exec("BEGIN TRANSACTION");
+    const stmt = db.prepare(
+      `INSERT ${update ? "or REPLACE" : ""} into ${
+        this.tableName
+      } VALUES (${new Array(this.column_cnt).fill("?").join(",")})`
     );
     data.forEach((datus) => {
       const { raceId, result } = datus;
@@ -96,8 +97,9 @@ export default class RaceResultTable extends DBCommon {
         result.prizeMoney
       );
     });
+    stmt.finalize();
     return new Promise((resolve, reject) => {
-      stmt.finalize((err) => (err ? reject(err) : resolve()));
+      db.run("COMMIT", (err) => (err ? reject(err) : resolve()));
     });
   }
 

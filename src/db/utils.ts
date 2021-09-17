@@ -2,6 +2,7 @@ import { entries } from "../lib";
 import { BetType } from "../model/bet";
 import { Payoff } from "../model/payoffResult";
 import Race from "../model/race";
+import { setDB } from "./DBCommon";
 import PayoffResultTable from "./payoffResultTable";
 import RaceResultTable from "./raceResultTable";
 import RaceTable from "./raceTable";
@@ -27,10 +28,9 @@ export const saveRace = (races: Race[]): Promise<[void, void, void]> =>
     ),
   ]);
 
-export const initDB = async (): Promise<void> => {
-  await Promise.all([
-    RaceTable.init(),
-    RaceResultTable.init(),
-    PayoffResultTable.init(),
-  ]);
+export const initDB = async (filename: string): Promise<void> => {
+  setDB(filename);
+  await RaceTable.init();
+  await RaceResultTable.init();
+  await PayoffResultTable.init();
 };

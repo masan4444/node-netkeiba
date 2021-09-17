@@ -3,7 +3,7 @@ import path from "path";
 import { parse as parseDate } from "date-fns";
 import HtmlParser, { HTMLElement } from "fast-html-parser";
 import { conditionRegExp, infoRegExp } from "../const";
-import { logger, parseTime } from "../lib";
+import { parseTime } from "../lib";
 import * as Bet from "../model/bet";
 import Race, {
   RaceResult,
@@ -31,7 +31,7 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
 
     time: parseTime(column[7]),
     margin: column[8],
-    timeFigure: Number(column[9]) || undefined,
+    timeFigure: parseInt(column[9]) || undefined,
     cornerRanking: column[10].split("-").map((n) => parseInt(n)),
     lastPhaseTime: parseTime(column[11]),
 
@@ -48,8 +48,7 @@ const parseResult = (elements: HTMLElement[]): RaceResult => {
   };
 
   if (!RaceResultValidator.is(raceResult)) {
-    logger.error("RaceResultParseError: ");
-    logger.error(raceResult);
+    throw new Error(`failed to parse race result`);
   }
   return raceResult;
 };
@@ -90,7 +89,7 @@ const parseRace = (url: string, html: string): Race => {
     .querySelector(".smalltxt")
     ?.firstChild.rawText.match(infoRegExp)?.groups;
   if (!name || !raceNumber || !condition || !info) {
-    throw new Error(`IntroParseError: ${url}`);
+    throw new Error(`failed to parse intro ${url}`);
   }
 
   const raceResult: RaceResult[] | undefined = root
@@ -103,6 +102,10 @@ const parseRace = (url: string, html: string): Race => {
     .querySelectorAll(".pay_block tr")
     .map(parsePayoff)
     .reduce((acc, e) => ({ ...acc, ...e }), {});
+
+  if (!raceResult?.length) {
+    throw new Error(`no race result ${url}`);
+  }
 
   const { steeple, surf, turn, line, dist, wether, trackCond, startTime } =
     condition;
@@ -125,10 +128,19 @@ const parseRace = (url: string, html: string): Race => {
     monthCnt: parseInt(monthCnt),
     dayCnt: parseInt(dayCnt),
     age: parseInt(age),
-    ageHigher: !!ageHigher,
+    ageHigher: ageHigher as Race["ageHigher"],
     raceClass: raceClass as Race["raceClass"],
     detail,
-    raceResult: raceResult as Race["raceResult"],
+    horseCnt: raceResult.length,
+    entryCnt: raceResult.filter(
+      (result) => !["取", "除"].includes(result.ranking as string)
+    ).length,
+    goalCnt: raceResult.filter(
+      (result) => !["取", "除", "中"].includes(result.ranking as string)
+    ).length,
+    rankCnt: raceResult.filter((result) => typeof result.ranking === "number")
+      .length,
+    raceResult,
     payoffResult,
   };
 };

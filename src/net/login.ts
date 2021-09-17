@@ -1,11 +1,10 @@
 import { URLSearchParams } from "url";
 import axiosBase from "axios";
 import axiosCookieJarSupport from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
+import { Cookie, CookieJar } from "tough-cookie";
 import { domain } from "../const";
-import { client } from "../lib";
 
-const login = async (loginId: string, password: string): Promise<boolean> => {
+const login = async (loginId: string, password: string): Promise<Cookie[]> => {
   axiosCookieJarSupport(axiosBase);
   const clientWithJar = axiosBase.create({
     jar: true,
@@ -21,10 +20,9 @@ const login = async (loginId: string, password: string): Promise<boolean> => {
   const cookiejar = (await clientWithJar
     .post(`https://regist.${domain}/account/`, form)
     .then((res) => res.config.jar)) as CookieJar;
-  const cookie = cookiejar.getCookieStringSync(`https://${domain}`);
-  client.defaults.headers = { common: { Cookie: cookie } };
+  const cookies = cookiejar.getCookiesSync(`https://${domain}`);
 
-  return cookie.includes("nkauth");
+  return cookies;
 };
 
 export default login;

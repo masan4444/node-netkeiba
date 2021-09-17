@@ -23,7 +23,7 @@ export const twoWin = ["2勝クラス", "1000万下"] as const;
 export const oneWin = ["1勝クラス", "500万下"] as const;
 
 export const conditionRegExp = RegExp(
-  `(?<steeple>障)?(?<surf>${surfs.join("|")})(?<turn>${turns.join(
+  `(?<steeple>障)?(?<surf>${surfs.join("|")}) ?(?<turn>${turns.join(
     "|"
   )})? ?(?<line>${lines.join(
     "|"
