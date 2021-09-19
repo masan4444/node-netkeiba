@@ -81,6 +81,7 @@ const parseRace = (url: string, html: string): Race => {
   }
 
   const name = intro.querySelector("h1")?.firstChild?.rawText?.trim();
+  const raceGrade = name?.match(/.*\(G(\d)\)/)?.[1];
   const raceNumber = intro.querySelector("dt")?.rawText?.trim()?.slice(0, -2);
   const condition = intro
     .querySelector("span")
@@ -91,6 +92,9 @@ const parseRace = (url: string, html: string): Race => {
   if (!name || !raceNumber || !condition || !info) {
     throw new Error(`failed to parse intro ${url}`);
   }
+  const trackCondFigure = root
+    .querySelector(".result_table_02 td")
+    ?.text?.match(/(\d+)\u00A0\(\?\)/)?.[1];
 
   const raceResult: RaceResult[] | undefined = root
     .querySelector(".race_table_01")
@@ -117,6 +121,7 @@ const parseRace = (url: string, html: string): Race => {
     course: course as Race["course"],
     raceNumber: parseInt(raceNumber),
     name,
+    raceGrade: raceGrade ? parseInt(raceGrade) : undefined,
     steeple: steeple as Race["steeple"],
     surf: surf as Race["surf"],
     turn: turn as Race["turn"],
@@ -131,6 +136,7 @@ const parseRace = (url: string, html: string): Race => {
     ageHigher: ageHigher as Race["ageHigher"],
     raceClass: raceClass as Race["raceClass"],
     detail,
+    trackCondFigure: trackCondFigure ? parseInt(trackCondFigure) : undefined,
     horseCnt: raceResult.length,
     entryCnt: raceResult.filter(
       (result) => !["取", "除"].includes(result.ranking as string)

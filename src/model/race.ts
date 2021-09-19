@@ -32,6 +32,7 @@ type Race = {
   course: Course; // 阪神
   raceNumber: number; // 11
   name: string; // 第56回宝塚記念(G1)
+  raceGrade?: number; // 1
 
   steeple?: "障";
   surf: Surf; // 芝
@@ -49,6 +50,7 @@ type Race = {
   ageHigher?: "以上"; // true (以上)
   raceClass: RaceClass; // オープン
   detail: string; // (国際)(指)(定量)
+  trackCondFigure?: number; // 5
 
   horseCnt: number; // 出走予定馬数
   entryCnt: number; // 出走馬数
