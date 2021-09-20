@@ -40,7 +40,7 @@ export default class RaceTable extends DBCommon {
     `CREATE INDEX id_index ON ${RaceTable.tableName}(id)`,
   ];
 
-  static column_cnt = 22;
+  static column_cnt = 24;
 
   static async createOrUpdate(races: Race[], update?: boolean): Promise<void> {
     const db = this.DB();
